@@ -1,8 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Quaternion = UnityEngine.Quaternion;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
 
 public class PlayerActions : MonoBehaviour
 {
@@ -15,6 +19,8 @@ public class PlayerActions : MonoBehaviour
 
     private InputAction m_move;
     private InputAction m_fire;
+
+    private Vector3 _startTransform; 
     // Start is called before the first frame update
 
     private void Awake()
@@ -40,12 +46,22 @@ public class PlayerActions : MonoBehaviour
     {
         
         m_rigidBody = GetComponent<Rigidbody>();
+        _startTransform = this.transform.position;
     }
 
     // Update is called once per frame
     void Update()
     {
         m_inputAxis = m_move.ReadValue<Vector2>().normalized;
+    }
+
+    public void ResetPlayer()
+    {
+        m_rigidBody.isKinematic = true;
+        this.transform.position = _startTransform;
+        m_rigidBody.velocity = Vector3.zero;
+        m_rigidBody.rotation = Quaternion.identity;
+        m_rigidBody.isKinematic = false;
     }
     private void FixedUpdate()
     {
